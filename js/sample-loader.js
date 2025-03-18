@@ -1,11 +1,15 @@
 // Add sample model loading functionality with fallback options
+
+// Get module classes from Three.js modules
+const { PLYLoader } = THREE.PLYLoader;
+
 function loadSampleModel() {
     // Primary path to the sample model
     const sampleModelPath = 'models/Lucy100k.ply';
     loadingStatus.textContent = 'Loading sample model...';
     
-    // Create PLY loader with error handling
-    const loader = new THREE.PLYLoader();
+    // Create PLY loader with error handling - using the correct constructor
+    const loader = new PLYLoader();
     
     // Set loading flag
     isLoading = true;
@@ -111,8 +115,8 @@ function tryFallbackModel() {
     // Fallback URL from Three.js repository
     const fallbackUrl = 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/models/ply/binary/Lucy100k.ply';
     
-    // Load from fallback URL
-    const loader = new THREE.PLYLoader();
+    // Load from fallback URL - using the correct constructor
+    const loader = new PLYLoader();
     
     // Set loading flag
     isLoading = true;

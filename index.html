@@ -7,10 +7,6 @@
     <link rel="stylesheet" href="css/styles.css">
     <!-- Import Three.js from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-    <!-- Import OrbitControls for pan, zoom, rotate -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js"></script>
-    <!-- Import PLYLoader for loading PLY files -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/PLYLoader.js"></script>
 </head>
 <body>
     <div class="container">
@@ -62,6 +58,10 @@
         </footer>
     </div>
 
+    <!-- Import OrbitControls and PLYLoader after Three.js -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/PLYLoader.js"></script>
+    
     <!-- Main application script -->
     <script src="js/app.js"></script>
     <!-- Sample model loader script -->

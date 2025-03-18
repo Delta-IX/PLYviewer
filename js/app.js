@@ -1,5 +1,9 @@
 // Main application script for PLY 3D Model Viewer
 
+// Get module classes from Three.js modules
+const { OrbitControls } = THREE.OrbitControls;
+const { PLYLoader } = THREE.PLYLoader;
+
 // Global variables
 let scene, camera, renderer, controls;
 let modelContainer;
@@ -60,8 +64,8 @@ function initThreeJs() {
         directionalLight.position.set(1, 1, 1);
         scene.add(directionalLight);
         
-        // Add OrbitControls
-        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        // Add OrbitControls - using the correct constructor
+        controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.25;
         controls.screenSpacePanning = false;
@@ -138,8 +142,8 @@ function loadPlyModel(url, modelName) {
     
     isLoading = true;
     
-    // Create PLY loader
-    const loader = new THREE.PLYLoader();
+    // Create PLY loader - using the correct constructor
+    const loader = new PLYLoader();
     
     // Set timeout for loading
     const loadingTimeout = setTimeout(() => {
