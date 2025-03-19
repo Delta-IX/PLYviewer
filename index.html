@@ -177,8 +177,6 @@
             }
         }
     </style>
-    <!-- Import Three.js from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -231,15 +229,9 @@
         </footer>
     </div>
 
-    <!-- Import OrbitControls and PLYLoader after Three.js -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/PLYLoader.js"></script>
-    
+    <!-- Import Three.js libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
     <script>
-        // Get module classes from Three.js modules
-        const { OrbitControls } = THREE.OrbitControls;
-        const { PLYLoader } = THREE.PLYLoader;
-        
         // Global variables
         let scene, camera, renderer, controls;
         let modelContainer;
@@ -301,14 +293,8 @@
                 directionalLight.position.set(1, 1, 1);
                 scene.add(directionalLight);
                 
-                // Add OrbitControls - using the correct constructor
-                controls = new OrbitControls(camera, renderer.domElement);
-                controls.enableDamping = true;
-                controls.dampingFactor = 0.25;
-                controls.screenSpacePanning = false;
-                controls.maxPolarAngle = Math.PI;
-                controls.minDistance = 1;
-                controls.maxDistance = 100;
+                // Load OrbitControls dynamically
+                loadOrbitControls();
                 
                 // Add grid helper for reference
                 const gridHelper = new THREE.GridHelper(10, 10);
@@ -322,6 +308,23 @@
                 loadingStatus.textContent = `Error initializing 3D viewer: ${error.message}`;
                 loadingStatus.style.color = 'red';
             }
+        }
+        
+        function loadOrbitControls() {
+            // Dynamically load OrbitControls
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+            script.onload = function() {
+                // Create OrbitControls after the script is loaded
+                controls = new THREE.OrbitControls(camera, renderer.domElement);
+                controls.enableDamping = true;
+                controls.dampingFactor = 0.25;
+                controls.screenSpacePanning = false;
+                controls.maxPolarAngle = Math.PI;
+                controls.minDistance = 1;
+                controls.maxDistance = 100;
+            };
+            document.head.appendChild(script);
         }
         
         function handleLocalFileSelect(event) {
@@ -371,6 +374,14 @@
             loadPlyModel(processedUrl, 'Model from URL');
         }
         
+        function loadPlyLoader(callback) {
+            // Dynamically load PLYLoader
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/PLYLoader.js';
+            script.onload = callback;
+            document.head.appendChild(script);
+        }
+        
         function loadPlyModel(url, modelName) {
             if (isLoading) {
                 console.log('Already loading a model, please wait...');
@@ -379,8 +390,21 @@
             
             isLoading = true;
             
-            // Create PLY loader - using the correct constructor
-            const loader = new PLYLoader();
+            // Load PLYLoader if not already loaded
+            if (typeof THREE.PLYLoader === 'undefined') {
+                loadPlyLoader(function() {
+                    // Continue loading the model after PLYLoader is loaded
+                    loadModelWithPLYLoader(url, modelName);
+                });
+            } else {
+                // PLYLoader is already loaded
+                loadModelWithPLYLoader(url, modelName);
+            }
+        }
+        
+        function loadModelWithPLYLoader(url, modelName) {
+            // Create PLY loader
+            const loader = new THREE.PLYLoader();
             
             // Set timeout for loading
             const loadingTimeout = setTimeout(() => {
@@ -481,7 +505,7 @@
         }
         
         function resetView() {
-            if (currentModel) {
+            if (currentModel && controls) {
                 // Reset camera position
                 camera.position.set(0, 0, 5);
                 camera.lookAt(0, 0, 0);
@@ -504,8 +528,10 @@
         function animate() {
             requestAnimationFrame(animate);
             
-            // Update controls
-            controls.update();
+            // Update controls if they exist
+            if (controls) {
+                controls.update();
+            }
             
             // Render scene
             renderer.render(scene, camera);
